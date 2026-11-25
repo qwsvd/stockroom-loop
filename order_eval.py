@@ -73,7 +73,8 @@ def paired(case, method, first, follow=None):
         first_view = session.interpret(case["text"],first,method=="C")
         events = [dict(first_view)]
         view = first_view
-        answered = (view["state"]=="ask" and view["target"]==case["target"] and case["answer"] is not None)
+        targeted = view["state"]=="ask" and view["target"]==case["target"]
+        answered = targeted and case["answer"] is not None
         if answered:
             events.append({"answer":case["answer"]})
             view = session.interpret(case["answer"],follow,False)
@@ -95,7 +96,7 @@ def paired(case, method, first, follow=None):
                 proposal=first,events=events,final_rows=final,write=wrote,
                 unsafe=wrote and not verified,
                 filled=verified,wrong_preview=preview and not right,
-                asked=first_view["state"]=="ask",targeted=answered,
+                asked=first_view["state"]=="ask",targeted=targeted,
                 correct_refusal=outcome=="refused" and case["kind"]=="unsupported",
                 terminal="unconfirmed" if preview and not right else outcome)
 
@@ -193,7 +194,7 @@ def metrics(rows,cases):
                       right_questions=r["targeted"],questions=r["asked"],unnecessary=r["asked"] and c["kind"]=="clear",
                       previews=any(e.get("state")=="preview" for e in r["events"]),wrong_previews=r["wrong_preview"],
                       slots=sum(k in slots and slots[k]==v for k,v in c["initial"].items()),
-                      conflict_correct=(pred=="conflict")== (c["kind"]=="conflict"),
+                      conflict_correct=pred is not None and (pred=="conflict")== (c["kind"]=="conflict"),
                       unsupported_tp=pred=="unsupported" and c["kind"]=="unsupported",
                       correct_refusals=r["correct_refusal"],fills=r["filled"])
     return dict(counts)

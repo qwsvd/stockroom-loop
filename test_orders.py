@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from order_language import evidence, schema
 from order_session import Session
-from order_eval import ROOT, decode_batch, matches_authorized_fill, paired, read, proposals
+from order_eval import ROOT, decode_batch, matches_authorized_fill, metrics, paired, read, proposals
 
 ORDER = "请预留茶，要3件，有效期不早于2026-12-02，优先早到期。"
 
@@ -111,3 +111,12 @@ class OrderTests(unittest.TestCase):
             row=paired(c,"C",first,follow)
             self.assertFalse(row["unsafe"],c["id"])
             self.assertEqual(row["filled"],c["kind"]!="unsupported",c["id"])
+
+    def test_question_credit_and_invalid_classifier(self):
+        clear, missing=read(ROOT/"orders.jsonl")[:2]
+        invalid=paired(clear,"B",None)
+        self.assertEqual(metrics([invalid],{clear["id"]:clear})["conflict_correct"],0)
+        unanswered=dict(missing,answer=None)
+        row=paired(unanswered,"C",evidence(missing["text"]))
+        self.assertTrue(row["targeted"])
+        self.assertFalse(row["write"])
