@@ -4,6 +4,12 @@ A small AI agent that reserves inventory, observes the result of each transactio
 
 [简体中文与源码阅读指南](README.zh-CN.md) · [Design and sources](docs/design.md) · [Experiment log](docs/experiments.md)
 
+## v0.2 reliability study
+
+On 1,000 paired held-out synthetic orders, a fixed initial plan reached 561 correct terminal states. The same allocator with reobservation reached 1,000, including 539 correct shortage declarations. Three exploratory live Codex runs matched the adaptive allocator on the same three orders. One recovered from a rejected stale reservation. [Results, failure cases and limits](docs/reliability-v0.2.md) · [Frozen protocol](docs/protocol-v0.2.md) · [Audit of v0.1](docs/audit-v0.1.0.md).
+
+The v0.2 study uses atomic in-memory order submission. Separate independent-connection tests exercise the original SQLite statement. The original demo and evidence remain available below. [Read the Codex client source](docs/learning/codex-source-map.md) · [Beginner guide](docs/learning/agent-from-zero.md) · [Handwriting exercises](exercises/README.md).
+
 ## Reproduce in a minute
 
 With Git and Python 3.11+ installed, run:
@@ -11,9 +17,12 @@ With Git and Python 3.11+ installed, run:
 ```sh
 git clone https://github.com/qwsvd/stockroom-loop.git
 cd stockroom-loop
-git checkout v0.1.0
+git checkout v0.2.0
 python -m unittest -v
 python replay.py
+python evaluate.py dev
+python evaluate.py holdout
+python report.py
 ```
 
 The tests use scripted policies. Replay applies the recorded actions from real model runs to fresh SQLite databases and checks each observation and final state. Both commands work offline after cloning. No pip installs are required.
@@ -27,7 +36,7 @@ python demo.py --policy codex
 
 For a human-operated demonstration, run `python demo.py --policy stdio` and enter one action per line. Start with `{"op":"inspect"}`. Use `--steady` to remove the competing sale or `--steps 1` to exercise budget exhaustion. The final JSON goes to stdout. Exit code 0 means verified success. Code 1 indicates an unsuccessful run. Argument or login errors can also terminate the CLI before a trace is produced.
 
-## What executes
+## What executes in the original SQLite demo
 
 1. `agent.run` sends the task and previous actions/observations to a policy.
 2. `demo.codex` obtains a single proposed JSON action via the external Codex client. The policy sees a textual tool protocol, without native provider function calling.

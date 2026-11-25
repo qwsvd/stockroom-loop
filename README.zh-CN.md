@@ -4,14 +4,19 @@
 
 ## 第一次运行
 
+v0.2 新增了独立研究。1,000 个保留场景中，固定计划正确完成 561 个，自适应算法正确完成全部，其中 539 个是正确报告缺货。真实 Codex 的三个探索样本与确定性算法得到相同终态。新实验整单提交，用内存环境保证各组遭遇相同干预；旧 SQLite 语句的真实锁竞争另有独立连接测试。[实验报告](docs/reliability-v0.2.md) · [旧版审查](docs/audit-v0.1.0.md) · [从零理解 Agent](docs/learning/agent-from-zero.md) · [手写练习](exercises/README.md) · [Codex 源码地图](docs/learning/codex-source-map.md)
+
 安装 Git 和 Python 3.11 或更高版本后，在终端运行以下命令。Windows 上如果只有 `py` 命令，可以用它代替 `python`。
 
 ```sh
 git clone https://github.com/qwsvd/stockroom-loop.git
 cd stockroom-loop
-git checkout v0.1.0
+git checkout v0.2.0
 python -m unittest -v
 python replay.py
+python evaluate.py dev
+python evaluate.py holdout
+python report.py
 ```
 
 第一条 Python 命令测试程序规则，第二条把真实实验中保存的动作重新放进新数据库，并核对每一步结果。两者都不调用模型。要看模型现场作决定，需要本机已有兼容的 Codex CLI 和 ChatGPT 登录，执行 `python demo.py --policy codex`。每次决策都会使用当前账号的推理额度。也可执行 `python demo.py --policy stdio`，自己输入动作体验同一套环境。
