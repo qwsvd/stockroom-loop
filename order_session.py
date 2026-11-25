@@ -1,10 +1,9 @@
 """One interactive order, isolated SQLite stock, explicit revision-bound consent."""
-import json
 import secrets
 import sqlite3
 from datetime import date
 from types import SimpleNamespace
-from order_language import FIELDS, PRODUCTS, QUESTIONS, evidence, schema
+from order_language import PRODUCTS, QUESTIONS, evidence, schema
 from study import Case, Market, grade, plan
 
 
@@ -28,11 +27,7 @@ class Session:
     def rows(self):
         return self.db.execute("SELECT * FROM lots ORDER BY id").fetchall()
 
-    def interpret(self, text, proposal, active=True):
-        if self.closed:
-            return {"state":"closed"}
-        self.revision += 1
-        self.pending = None
+    def proof_for(self, text):
         proof = evidence(text)
         if self.dialogue and not text.startswith("重下："):
             # Accept a fragment only for the single previously requested field.
@@ -45,12 +40,19 @@ class Session:
                 slots[field] = proof["slots"][field]
                 proof = {"kind":"clear","target":None,"slots":slots}
             else:
-                self.asked = None
-                self.last_proof = None
-                self.dialogue.append(text)
-                return {"state":"blocked","reason":"请用重下：开头重新提供完整订单"}
+                return None
+        return proof
+
+    def interpret(self, text, proposal, active=True):
+        if self.closed:
+            return {"state":"closed"}
+        self.revision += 1
+        self.pending = None
+        proof = self.proof_for(text)
         self.dialogue.append(text)
         self.last_proof, self.asked = proof, None
+        if proof is None:
+            return {"state":"blocked","reason":"请用重下：开头重新提供完整订单"}
         if not schema(proposal):
             return {"state":"blocked","reason":"invalid schema"}
         if proof["kind"]=="unsupported":
