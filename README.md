@@ -25,7 +25,7 @@ python evaluate.py holdout
 python report.py
 ```
 
-The tests use scripted policies. Replay applies the recorded actions from real model runs to fresh SQLite databases and checks each observation and final state. Both commands work offline after cloning. No pip installs are required.
+The tests include scripted policies and independent SQLite connections. Legacy replay applies saved decisions to new databases. The two evaluate commands reproduce each paired trial. The report checks the new live trajectories and usage totals against per-decision records. All five checks work offline after cloning with standard Python.
 
 To run fresh inference, use a compatible Codex CLI (tested with 0.144.6) already signed in with ChatGPT. Check your quota in the client before running. This adapter uses the existing login and requires its English login-status confirmation. It starts a fresh ephemeral CLI process for each action and sends the goal and public trajectory.
 

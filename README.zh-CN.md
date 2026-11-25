@@ -19,7 +19,7 @@ python evaluate.py holdout
 python report.py
 ```
 
-第一条 Python 命令测试程序规则，第二条把真实实验中保存的动作重新放进新数据库，并核对每一步结果。两者都不调用模型。要看模型现场作决定，需要本机已有兼容的 Codex CLI 和 ChatGPT 登录，执行 `python demo.py --policy codex`。每次决策都会使用当前账号的推理额度。也可执行 `python demo.py --policy stdio`，自己输入动作体验同一套环境。
+第一条 Python 命令测试程序规则和数据库连接竞争，第二条重放旧版动作。两条 evaluate 命令逐题复核开发集和保留集，report 核对新模型轨迹、用量合计并打印指标。这五步都可以离线完成。要体验旧版模型演示，执行 `python demo.py --policy codex`；要自己输入动作，执行 `python demo.py --policy stdio`。新版三题的现场入口是 `python live_study.py fresh-live.jsonl`，需要兼容的 Codex CLI 和既有 ChatGPT 登录，会使用订阅推理额度。
 
 ## 用手做一次
 

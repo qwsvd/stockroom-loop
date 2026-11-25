@@ -34,6 +34,13 @@ def check_live(row):
     compare(row, trial(generate(row["seed"]), "codex", replay))
     if next(calls, None) is not None:
         raise ValueError("extra live decision")
+    metered = [call["usage"] for call in row["calls"]]
+    total = None
+    if all(usage is not None for usage in metered):
+        keys = {key for usage in metered for key in usage}
+        total = {key: sum(usage.get(key, 0) for usage in metered) for key in keys}
+    if row["usage"] != total:
+        raise ValueError("task usage differs from per-decision evidence")
 
 
 if __name__ == "__main__":
