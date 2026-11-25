@@ -4,6 +4,8 @@
 
 ## 第一次运行
 
+v0.3 的入口是 `python order_demo.py`，默认使用本地规则。输入“请预留茶，有效期不早于2026-12-01，优先早到期。”，程序会询问数量。回答“要3件”，核对预览后再输入本次确认码。加上 `--model` 可使用现有 ChatGPT 登录进行真实提取。两种方式都只能通过同一个校验和确认流程预留合成库存。[中文入门](docs/learning/clarification-from-zero.md) · [研究结论](docs/clarification-v0.3.md) · [指标与分母](docs/results-v0.3.md) · [架构图](docs/protocol-v0.3.md)
+
 v0.2 新增了独立研究。1,000 个保留场景中，固定计划正确完成 561 个，自适应算法正确完成全部，其中 539 个是正确报告缺货。真实 Codex 的三个探索样本与确定性算法得到相同终态。新实验整单提交，用内存环境保证各组遭遇相同干预；旧 SQLite 语句的真实锁竞争另有独立连接测试。[实验报告](docs/reliability-v0.2.md) · [旧版审查](docs/audit-v0.1.0.md) · [从零理解 Agent](docs/learning/agent-from-zero.md) · [手写练习](exercises/README.md) · [Codex 源码地图](docs/learning/codex-source-map.md)
 
 安装 Git 和 Python 3.11 或更高版本后，在终端运行以下命令。Windows 上如果只有 `py` 命令，可以用它代替 `python`。
@@ -11,12 +13,14 @@ v0.2 新增了独立研究。1,000 个保留场景中，固定计划正确完成
 ```sh
 git clone https://github.com/qwsvd/stockroom-loop.git
 cd stockroom-loop
-git checkout v0.2.0
+git checkout v0.3.0
 python -m unittest -v
 python replay.py
 python evaluate.py dev
 python evaluate.py holdout
 python report.py
+python order_eval.py
+python order_report.py
 ```
 
 第一条 Python 命令测试程序规则和数据库连接竞争，第二条重放旧版动作。两条 evaluate 命令逐题复核开发集和保留集，report 核对新模型轨迹、用量合计并打印指标。这五步都可以离线完成。要体验旧版模型演示，执行 `python demo.py --policy codex`；要自己输入动作，执行 `python demo.py --policy stdio`。新版三题的现场入口是 `python live_study.py fresh-live.jsonl`，需要兼容的 Codex CLI 和既有 ChatGPT 登录，会使用订阅推理额度。

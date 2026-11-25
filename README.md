@@ -4,6 +4,14 @@ A small AI agent that reserves inventory, observes the result of each transactio
 
 [简体中文与源码阅读指南](README.zh-CN.md) · [Design and sources](docs/design.md) · [Experiment log](docs/experiments.md)
 
+## v0.3 Chinese orders, clarification and consent
+
+Try `python order_demo.py` for an offline Chinese dialogue. Enter `请预留茶，有效期不早于2026-12-01，优先早到期。`, answer the quantity question with `要3件`, then inspect the exact preview before entering its confirmation code. Add `--model` for real language extraction with your existing ChatGPT login. The default interactive rules mode can ask questions. Benchmark A deliberately uses those rules in single-pass mode.
+
+The language interface supports one product, an integer quantity, a minimum expiry date and an expiry priority. It accepts known Chinese clause forms. Unknown clauses block execution. Each session has a fresh SQLite fixture. The extractor can propose fields or select a clarification target. Only a separate user confirmation can cause a reservation. A revised order invalidates the previous preview. The transaction checks actual database rows using the v0.2 grader before commit.
+
+[Architecture and frozen protocol](docs/protocol-v0.3.md) · [Study findings and limitations](docs/clarification-v0.3.md) · [Recomputed metrics](docs/results-v0.3.md) · [Synthetic inputs, model replies and traces](evidence/v03) · [Chinese tutorial](docs/learning/clarification-from-zero.md)
+
 ## v0.2 reliability study
 
 On 1,000 paired held-out synthetic orders, a fixed initial plan reached 561 correct terminal states. The same allocator with reobservation reached 1,000, including 539 correct shortage declarations. Three exploratory live Codex runs matched the adaptive allocator on the same three orders. One recovered from a rejected stale reservation. [Results, failure cases and limits](docs/reliability-v0.2.md) · [Frozen protocol](docs/protocol-v0.2.md) · [Audit of v0.1](docs/audit-v0.1.0.md).
@@ -17,15 +25,17 @@ With Git and Python 3.11+ installed, run:
 ```sh
 git clone https://github.com/qwsvd/stockroom-loop.git
 cd stockroom-loop
-git checkout v0.2.0
+git checkout v0.3.0
 python -m unittest -v
 python replay.py
 python evaluate.py dev
 python evaluate.py holdout
 python report.py
+python order_eval.py
+python order_report.py
 ```
 
-The tests include scripted policies and independent SQLite connections. Legacy replay applies saved decisions to new databases. The two evaluate commands reproduce each paired trial. The report checks the new live trajectories and usage totals against per-decision records. All five checks work offline after cloning with standard Python.
+The tests include scripted policies and independent SQLite connections. Legacy replay applies saved decisions to new databases. The two evaluate commands reproduce the v0.2 paired trials. Its report checks trajectories and usage totals. The two order commands replay v0.3 against fresh databases and calculate its metrics. All checks work offline after cloning with standard Python.
 
 To run fresh inference, use a compatible Codex CLI (tested with 0.144.6) already signed in with ChatGPT. Check your quota in the client before running. This adapter uses the existing login and requires its English login-status confirmation. It starts a fresh ephemeral CLI process for each action and sends the goal and public trajectory.
 

@@ -1,4 +1,3 @@
-import json
 import unittest
 from unittest.mock import patch
 
@@ -90,6 +89,12 @@ class OrderTests(unittest.TestCase):
         missing=ORDER.replace("要3件，","")
         self.assertEqual(self.submit(missing,evidence(ORDER))["state"],"blocked")
         self.assertEqual(self.session.confirm("确认 yes")["state"],"blocked")
+        self.assertEqual(self.session.rows(),self.before)
+
+    def test_clear_paraphrase_outside_grammar_is_refused(self):
+        # Post-hoc scope probe. A semantically correct extraction is still insufficient.
+        text="茶要三件，至少能放到2026年12月2日，先挑快到期的。"
+        self.assertEqual(self.submit(text,evidence(ORDER))["state"],"refused")
         self.assertEqual(self.session.rows(),self.before)
 
     def test_independent_labels_and_completeness(self):
