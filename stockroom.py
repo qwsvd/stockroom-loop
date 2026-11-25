@@ -11,7 +11,9 @@ SEED = (
 )
 GOAL = """Reserve exactly 5 tea units valid on 2026-06-01. Use earliest expiry first;
 break ties by lot ID. Stock can change before reservation. Choose one JSON object:
-{"op":"inspect"}, {"op":"reserve","lot":"ID","qty":1}, or {"op":"finish"}.
+inspect: {"op":"inspect"}; reserve: {"op":"reserve","lot":LOT_ID,"qty":INTEGER};
+finish: {"op":"finish"}. LOT_ID is a JSON string; INTEGER can be 1 through 5.
+Each decision consumes a step. Batch the required units for a lot in one reservation.
 inspect returns [lot, product, expiry, available, reserved] rows. Use feedback.
 Only finish once the order is correct. Reply with the JSON object alone."""
 
@@ -66,4 +68,3 @@ def verified(room):
         remaining -= pick
     actual = {lot: tuple(values) for lot, *values in room.snapshot()}
     return remaining == 0 and expected == actual
-

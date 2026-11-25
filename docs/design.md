@@ -14,4 +14,3 @@ A policy maps a goal and observations to an action. The environment changes stat
 
 ## Simpler baseline
 A deterministic first-expiry-first-out allocator is preferable for this fixed business rule in production. We use the rule as an independent oracle for studying feedback. This release does not establish that a model improves warehouse operations. A later experiment could vary the natural-language request and the inventory independently, with held-out cases and a symbolic baseline.
-

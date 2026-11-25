@@ -1,0 +1,188 @@
+{
+  "policy": "codex",
+  "scenario": "race",
+  "step_limit": 9,
+  "status": "verified",
+  "history": [
+    {
+      "action": {
+        "op": "inspect"
+      },
+      "observation": {
+        "lots": [
+          [
+            "B7",
+            "tea",
+            "2026-06-09",
+            6,
+            0
+          ],
+          [
+            "H4",
+            "tea",
+            "2026-06-03",
+            4,
+            0
+          ],
+          [
+            "M8",
+            "soap",
+            "2026-06-01",
+            8,
+            0
+          ],
+          [
+            "X3",
+            "tea",
+            "2026-05-31",
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "action": {
+        "op": "reserve",
+        "lot": "H4",
+        "qty": 4
+      },
+      "observation": {
+        "error": "quantity, eligibility or order limit failed; inspect current stock"
+      }
+    },
+    {
+      "action": {
+        "op": "inspect"
+      },
+      "observation": {
+        "lots": [
+          [
+            "B7",
+            "tea",
+            "2026-06-09",
+            6,
+            0
+          ],
+          [
+            "H4",
+            "tea",
+            "2026-06-03",
+            1,
+            0
+          ],
+          [
+            "M8",
+            "soap",
+            "2026-06-01",
+            8,
+            0
+          ],
+          [
+            "X3",
+            "tea",
+            "2026-05-31",
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "action": {
+        "op": "reserve",
+        "lot": "H4",
+        "qty": 1
+      },
+      "observation": {
+        "reserved": 1,
+        "lot": "H4"
+      }
+    },
+    {
+      "action": {
+        "op": "inspect"
+      },
+      "observation": {
+        "lots": [
+          [
+            "B7",
+            "tea",
+            "2026-06-09",
+            6,
+            0
+          ],
+          [
+            "H4",
+            "tea",
+            "2026-06-03",
+            0,
+            1
+          ],
+          [
+            "M8",
+            "soap",
+            "2026-06-01",
+            8,
+            0
+          ],
+          [
+            "X3",
+            "tea",
+            "2026-05-31",
+            9,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "action": {
+        "op": "reserve",
+        "lot": "B7",
+        "qty": 4
+      },
+      "observation": {
+        "reserved": 4,
+        "lot": "B7"
+      }
+    },
+    {
+      "action": {
+        "op": "finish"
+      },
+      "observation": "verified"
+    }
+  ],
+  "external_sale": 3,
+  "final_lots": [
+    [
+      "B7",
+      "tea",
+      "2026-06-09",
+      2,
+      4
+    ],
+    [
+      "H4",
+      "tea",
+      "2026-06-03",
+      0,
+      1
+    ],
+    [
+      "M8",
+      "soap",
+      "2026-06-01",
+      8,
+      0
+    ],
+    [
+      "X3",
+      "tea",
+      "2026-05-31",
+      9,
+      0
+    ]
+  ]
+}

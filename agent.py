@@ -30,4 +30,3 @@ def run(room, policy, limit=9):
         history.append({"action": action, "observation": observation})
     return {"status": status, "history": history, "external_sale": room.sold,
             "final_lots": room.snapshot()}
-
