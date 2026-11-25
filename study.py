@@ -91,6 +91,8 @@ def grade(case, market, claim):
     for key, (sku, day, initial) in case.lots.items():
         p, d, left = market.stock[key]
         held = market.held.get(key, 0)
+        if type(left) is not int or type(held) is not int:
+            return False
         if (p, d) != (sku, day) or min(left, held) < 0 or left + held != initial - case.sale.get(key, 0):
             return False
         if sku == case.order["sku"] and day >= case.order["min_day"]:

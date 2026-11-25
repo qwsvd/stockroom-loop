@@ -11,7 +11,7 @@ from threading import Timer
 
 from study import PROMPT, generate, trial
 
-LIMIT = re.compile(r"quota|rate[ _-]?limit|usage[ _-]?limit|too many requests|payment|purchase|out of credits|buy credits|billing|429\b|402\b|limit.{0,30}(remaining|reached)|\d+%.{0,15}(left|remaining)", re.I)
+LIMIT = re.compile(r"quota|rate[ _-]?limit|usage[ _-]?limit|too many requests|payment|purchase|out of credits|buy credits|billing|(?:HTTP|status|error)\D{0,10}(?:429|402)\b|limit.{0,30}(remaining|reached)|\d+%.{0,15}(left|remaining)", re.I)
 TOKEN_KEYS = ("input_tokens", "cached_input_tokens", "output_tokens", "reasoning_output_tokens")
 
 
@@ -64,6 +64,9 @@ class Client:
                             event = json.loads(line)
                         except ValueError:
                             continue
+                        if isinstance(event, dict) and event.get("type") in ("error", "turn.failed"):
+                            proc.kill()
+                            raise RuntimeError("provider error event")
                         if isinstance(event, dict) and event.get("type") == "turn.completed":
                             usage = event.get("usage") or {}
                             counts = {k: usage[k] for k in TOKEN_KEYS if type(usage.get(k)) is int}

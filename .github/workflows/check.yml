@@ -20,3 +20,6 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m unittest -v
       - run: python replay.py
+      - run: python evaluate.py dev
+      - run: python evaluate.py holdout
+      - run: python report.py
