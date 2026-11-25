@@ -39,6 +39,9 @@ class Client:
         self.calls = []
 
     def __call__(self, order, history):
+        return self.request(PROMPT + "\n" + json.dumps({"order": order, "history": history}))
+
+    def request(self, message, limit=1024):
         entry = {"usage": None, "model": None}
         self.calls.append(entry)
         with tempfile.TemporaryDirectory() as tmp:
@@ -52,7 +55,6 @@ class Client:
                 timer = Timer(120, proc.kill)
                 timer.start()
                 try:
-                    message = PROMPT + "\n" + json.dumps({"order": order, "history": history})
                     proc.stdin.write(message.encode())
                     proc.stdin.close()
                     for raw in proc.stdout:
@@ -76,10 +78,10 @@ class Client:
                 finally:
                     timer.cancel()
             with (Path(tmp) / "reply.txt").open(encoding="utf-8") as stream:
-                reply = stream.read(1025)
+                reply = stream.read(limit + 1)
             entry["reply"] = reply
             try:
-                return json.loads(reply) if len(reply) <= 1024 else None
+                return json.loads(reply) if len(reply) <= limit else None
             except (ValueError, RecursionError):
                 return None
 

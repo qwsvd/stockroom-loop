@@ -23,3 +23,5 @@ jobs:
       - run: python evaluate.py dev
       - run: python evaluate.py holdout
       - run: python report.py
+      - run: python order_eval.py
+      - run: python -c "from pathlib import Path; from order_report import render; assert Path('docs/results-v0.3.md').read_text(encoding='utf-8') == render()"
